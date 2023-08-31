@@ -1,0 +1,39 @@
+{
+	"name": "sensors-orientation",
+	"version": "1.0.0",
+	"main": "dist/index.js",
+	"module": "dist/index.mjs",
+	"types": "dist/index.d.ts",
+	"engines": {
+		"node": "^16.0.0 || >=18.0.0"
+	},
+	"files": [
+		"dist"
+	],
+	"exports": {
+		".": {
+			"import": "./dist/index.mjs",
+			"require": "./dist/index.js",
+			"types": "./dist/index.d.ts"
+		},
+		"./dist/index.css": {
+			"import": "./dist/orientation.css",
+			"require": "./dist/orientation.css"
+		}
+	},
+	"scripts": {
+		"build": "tsup src/index.ts --dts --format cjs,esm --minify",
+		"watch": "tsup src/index.ts --format cjs,esm  src/orientation.css  --watch",
+		"demo": "live-server . --port 8181"
+	},
+	"license": "MIT",
+	"devDependencies": {
+		"@types/node": "^20.5.7",
+		"eslint": "^8.48.0",
+		"tsup": "^7.2.0",
+		"typescript": "^5.2.2"
+	},
+	"dependencies": {
+		"ts-node": "^10.9.1"
+	}
+}
