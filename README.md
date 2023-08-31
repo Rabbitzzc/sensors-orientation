@@ -1,5 +1,43 @@
+# sensors-orientation
 
-## TODO
+<img src="./ui.png">
 
-- [ ]   通过输入框或者 reset 按钮，将 Orientation 传递给拖动 DOM
-- [x]   通过拖动，将 Orientation 信息传出来
+A draggable DOM component that simulates Orientation, similar to the browser devtools, and matches the behavior of the browser devtools.
+
+# Usage
+
+## Demo
+
+```sh
+yarn 
+
+yarn demo
+```
+
+## Install
+
+```
+yarn add orientation
+```
+
+## Use in Vue
+```ts
+import { ref, onMounted } from 'vue'
+import registerOrientation from 'sensors-orientation'
+import 'sensors-orientation/dist/index.css'
+
+
+const manager = ref(null)
+
+function reset() {
+    manager.value.resetDeviceOrientation();
+}
+
+// 生命周期钩子
+onMounted(() => {
+  manager.value = registerOrientation(document.querySelector('.orientation'));
+  manager.value.onChangeDeviceOrientation(args=>{
+    console.error('onChangeDeviceOrientation', args);
+  })
+})
+```

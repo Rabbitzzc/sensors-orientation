@@ -26,6 +26,10 @@
 		"watch": "tsup src/index.ts --format cjs,esm  src/orientation.css  --watch",
 		"demo": "live-server . --port 8181"
 	},
+	"homepage": "https://github.com/Rabbitzzc/sensors-orientation",
+	"author": {
+		"name": "Rabbitzzc"
+	},
 	"license": "MIT",
 	"devDependencies": {
 		"@types/node": "^20.5.7",
