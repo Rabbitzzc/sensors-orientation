@@ -41,3 +41,7 @@ export const createElement = <T extends keyof HTMLElementTagNameMap>(
 
 	return element;
 };
+
+export const roundAngle = (angle: number): number => {
+	return Math.round(angle * 10000) / 10000;
+};

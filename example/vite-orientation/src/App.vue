@@ -1,16 +1,12 @@
 <template>
   <div>
-    <a
-      href="https://vitejs.dev"
-      target="_blank"
-    >
-      <img
-        src="/vite.svg"
-        class="logo"
-        alt="Vite logo"
-      />
-    </a>
     <h2>orientation demo</h2>
+    <div class="opt">
+      <button
+        class="reset"
+        @click="reset"
+      >reset</button>
+    </div>
     <div class="orientation"></div>
   </div>
 </template>
@@ -21,10 +17,21 @@ import registerOrientation from 'sensors-orientation'
 import 'sensors-orientation/dist/index.css'
 
 
+const manager = ref(null)
+
+function reset() {
+    manager.value.resetDeviceOrientation();
+}
+
 // 生命周期钩子
 onMounted(() => {
-  registerOrientation(document.querySelector('.orientation'))
+  manager.value = registerOrientation(document.querySelector('.orientation'));
+  manager.value.onChangeDeviceOrientation(args=>{
+    console.error('onChangeDeviceOrientation', args);
+  })
 })
+
+
 </script>
 <style scoped>
 .logo {

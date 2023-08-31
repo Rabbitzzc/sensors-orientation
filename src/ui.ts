@@ -1,7 +1,7 @@
 import { installDragHandle } from './drag';
 import { DeviceOrientation } from './emulation';
 import { EulerAngles, Vector, calculateAngle, crossProduct } from './geometry';
-import { CustomElement, consume, createElement } from './utils';
+import { CustomElement, consume, createElement, roundAngle } from './utils';
 
 const enum DeviceOrientationModificationSource {
 	UserInput = 'userInput',
@@ -11,6 +11,12 @@ const enum DeviceOrientationModificationSource {
 }
 
 const ShiftDragOrientationSpeed = 16;
+
+type ChangedFCType = (orientation: {
+	alpha: number;
+	beta: number;
+	gamma: number;
+}) => any;
 
 export class OrientationView {
 	private boxElement: CustomElement;
@@ -22,6 +28,7 @@ export class OrientationView {
 	private mouseDownVector?: Vector | null;
 	private originalBoxMatrix?: DOMMatrix;
 	private deviceOrientation: DeviceOrientation;
+	private deviceOrientationChanged: ChangedFCType;
 
 	constructor(private orientationGroup: HTMLElement) {}
 
@@ -91,19 +98,7 @@ export class OrientationView {
 			newOrientation,
 			DeviceOrientationModificationSource.UserDrag
 		);
-		// this.setSelectElementLabel(
-		// 	this.orientationSelectElement,
-		// 	NonPresetOptions.Custom
-		// );
 		return false;
-	}
-
-	private resetDeviceOrientation(): void {
-		this.setDeviceOrientation(
-			new DeviceOrientation(0, 90, 0),
-			DeviceOrientationModificationSource.ResetButton
-		);
-		// this.setSelectElementLabel(this.orientationSelectElement, '[0, 90, 0]');
 	}
 
 	private setDeviceOrientation(
@@ -114,42 +109,20 @@ export class OrientationView {
 			return;
 		}
 
-		function roundAngle(angle: number): number {
-			return Math.round(angle * 10000) / 10000;
-		}
-
-		const alpha = String(roundAngle(deviceOrientation.alpha));
-		const beta = String(roundAngle(deviceOrientation.beta));
-		const gamma = String(roundAngle(deviceOrientation.gamma));
-
-		console.error('偏移量数据为：', alpha, beta, gamma);
-		// TODO 应该是将信息输入到输入框中....
-		// if (modificationSource !== DeviceOrientationModificationSource.UserInput) {
-		// 	this.alphaSetter(String(roundAngle(deviceOrientation.alpha)));
-		// 	this.betaSetter(String(roundAngle(deviceOrientation.beta)));
-		// 	this.gammaSetter(String(roundAngle(deviceOrientation.gamma)));
-		// }
-
 		const animate =
 			modificationSource !== DeviceOrientationModificationSource.UserDrag;
 		this.setBoxOrientation(deviceOrientation, animate);
 
 		this.deviceOrientation = deviceOrientation;
-		this.applyDeviceOrientation();
-	}
 
-	private applyDeviceOrientation(): void {
-		if (this.deviceOrientationOverrideEnabled) {
-			// TODO：this.deviceOrientationSetting.set(this.deviceOrientation.toSetting()); 了解含义
-		}
-		// TODO 含义
-		// for (const emulationModel of SDK.TargetManager.TargetManager.instance().models(
-		// 	SDK.EmulationModel.EmulationModel
-		// )) {
-		// 	void emulationModel.emulateDeviceOrientation(
-		// 		this.deviceOrientationOverrideEnabled ? this.deviceOrientation : null
-		// 	);
-		// }
+		const alpha = Number(roundAngle(deviceOrientation.alpha));
+		const beta = Number(roundAngle(deviceOrientation.beta));
+		const gamma = Number(roundAngle(deviceOrientation.gamma));
+		this.deviceOrientationChanged({
+			alpha,
+			beta,
+			gamma,
+		});
 	}
 
 	private setBoxOrientation(
@@ -168,20 +141,6 @@ export class OrientationView {
 			.rotate(beta, 0, 0)
 			.rotate(0, gamma, 0);
 		this.orientationLayer.style.transform = `rotateY(${alpha}deg) rotateX(${-beta}deg) rotateZ(${gamma}deg)`;
-	}
-
-	/**
-	 * TODO: 选择器：这里是给 select 增加内容，似乎没必要
-	 */
-	private setSelectElementLabel(
-		selectElement: HTMLSelectElement,
-		labelValue: string
-	): void {
-		const optionValues = Array.prototype.map.call(
-			selectElement.options,
-			(x) => x.value
-		);
-		selectElement.selectedIndex = optionValues.indexOf(labelValue);
 	}
 
 	private loadingDeviceEmulation() {
@@ -225,6 +184,19 @@ export class OrientationView {
 		this.orientationGroup.appendChild(this.orientationContent);
 	}
 
+	/**
+	 * 重置数据
+	 */
+	resetDeviceOrientation(): void {
+		this.setDeviceOrientation(
+			new DeviceOrientation(0, 90, 0),
+			DeviceOrientationModificationSource.ResetButton
+		);
+	}
+
+	/**
+	 * 注册 DOM
+	 */
 	createDeviceOrientation() {
 		this.loadingDeviceEmulation();
 
@@ -238,5 +210,9 @@ export class OrientationView {
 			'-webkit-grabbing',
 			'-webkit-grab'
 		);
+	}
+
+	onChangeDeviceOrientation(cb: ChangedFCType) {
+		this.deviceOrientationChanged = cb;
 	}
 }
