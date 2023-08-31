@@ -9,7 +9,6 @@ import { OrientationView } from './ui';
 
 const registerOrientation = (dom: HTMLElement) => {
 	const manager = new OrientationView(dom);
-	manager.createDeviceOrientation();
 	return manager;
 };
 

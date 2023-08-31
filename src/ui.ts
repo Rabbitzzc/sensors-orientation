@@ -30,7 +30,9 @@ export class OrientationView {
 	private deviceOrientation: DeviceOrientation;
 	private deviceOrientationChanged: ChangedFCType;
 
-	constructor(private orientationGroup: HTMLElement) {}
+	constructor(private orientationGroup: HTMLElement) {
+		this.createDeviceOrientation();
+	}
 
 	private onBoxDragStart(event: MouseEvent): boolean {
 		if (!this.deviceOrientationOverrideEnabled) {
@@ -197,7 +199,7 @@ export class OrientationView {
 	/**
 	 * 注册 DOM
 	 */
-	createDeviceOrientation() {
+	private createDeviceOrientation() {
 		this.loadingDeviceEmulation();
 
 		installDragHandle(
