@@ -120,7 +120,7 @@ export class OrientationView {
 		const alpha = Number(roundAngle(deviceOrientation.alpha));
 		const beta = Number(roundAngle(deviceOrientation.beta));
 		const gamma = Number(roundAngle(deviceOrientation.gamma));
-		this.deviceOrientationChanged({
+		this.deviceOrientationChanged?.({
 			alpha,
 			beta,
 			gamma,
