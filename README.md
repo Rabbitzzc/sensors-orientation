@@ -17,7 +17,7 @@ yarn demo
 ## Install
 
 ```
-yarn add orientation
+yarn add sensors-orientation
 ```
 
 ## Use in Vue
