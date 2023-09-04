@@ -25,6 +25,7 @@ yarn add sensors-orientation
 import { ref, onMounted } from 'vue'
 import registerOrientation from 'sensors-orientation'
 import 'sensors-orientation/dist/index.css'
+// import type {OrientationView} from 'sensors-orientation'
 
 
 const manager = ref(null)
@@ -36,7 +37,7 @@ function reset() {
 // 生命周期钩子
 onMounted(() => {
   manager.value = registerOrientation(document.querySelector('.orientation'));
-  manager.value.onChangeDeviceOrientation(args=>{
+  manager.value.onChangeDeviceOrientation(args => {
     console.error('onChangeDeviceOrientation', args);
   })
 })
@@ -53,16 +54,28 @@ register orientation, use it first.
 
 #### return
 
-Return a manager of type `OrientationView`
+Return a `manager` of type `OrientationView`
 
 ### manager.resetDeviceOrientation
 
 reset the orientation data to `[0, 90, 0]`
 
-### onChangeDeviceOrientation
+### manager.onChangeDeviceOrientation
 
 listens the orientation data changes and triggers a callback
 
 #### params
 
 1. callback: `ChangedFCType`
+
+### manager.setDeviceOrientation
+set device orientation, like user input.
+
+#### params
+
+1. orientation: `OrientationType`
+
+## Type
+
+* `OrientationType` 
+* `OrientationView`

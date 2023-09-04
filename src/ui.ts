@@ -12,11 +12,13 @@ const enum DeviceOrientationModificationSource {
 
 const ShiftDragOrientationSpeed = 16;
 
-type ChangedFCType = (orientation: {
+export type OrientationType = {
 	alpha: number;
 	beta: number;
 	gamma: number;
-}) => any;
+};
+
+type ChangedFCType = (orientation: OrientationType) => any;
 
 export class OrientationView {
 	private boxElement: CustomElement;
@@ -30,7 +32,7 @@ export class OrientationView {
 	private deviceOrientation: DeviceOrientation;
 	private deviceOrientationChanged: ChangedFCType;
 
-	constructor(private orientationGroup: HTMLElement) {
+	constructor(private orientationGroup: HTMLElement | Element) {
 		this.createDeviceOrientation();
 	}
 
@@ -96,14 +98,14 @@ export class OrientationView {
 			eulerAngles.beta,
 			eulerAngles.gamma
 		);
-		this.setDeviceOrientation(
+		this._setDeviceOrientation(
 			newOrientation,
 			DeviceOrientationModificationSource.UserDrag
 		);
 		return false;
 	}
 
-	private setDeviceOrientation(
+	private _setDeviceOrientation(
 		deviceOrientation: DeviceOrientation | null,
 		modificationSource: DeviceOrientationModificationSource
 	): void {
@@ -186,19 +188,6 @@ export class OrientationView {
 		this.orientationGroup.appendChild(this.orientationContent);
 	}
 
-	/**
-	 * 重置数据
-	 */
-	resetDeviceOrientation(): void {
-		this.setDeviceOrientation(
-			new DeviceOrientation(0, 90, 0),
-			DeviceOrientationModificationSource.ResetButton
-		);
-	}
-
-	/**
-	 * 注册 DOM
-	 */
 	private createDeviceOrientation() {
 		this.loadingDeviceEmulation();
 
@@ -211,6 +200,27 @@ export class OrientationView {
 			null,
 			'-webkit-grabbing',
 			'-webkit-grab'
+		);
+	}
+
+	/**
+	 * 重置数据
+	 */
+	resetDeviceOrientation(): void {
+		this._setDeviceOrientation(
+			new DeviceOrientation(0, 90, 0),
+			DeviceOrientationModificationSource.ResetButton
+		);
+	}
+
+	setDeviceOrientation(orientation: OrientationType) {
+		this._setDeviceOrientation(
+			new DeviceOrientation(
+				orientation.alpha,
+				orientation.beta,
+				orientation.gamma
+			),
+			DeviceOrientationModificationSource.UserInput
 		);
 	}
 
